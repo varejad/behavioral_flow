@@ -1,146 +1,78 @@
 import random
 
-_acao_atual = []
-_refocado = False
-_ultima_acao = []
-respostas_padrao = {}
-_antecedentes_e_respostas = {}
-respostas_atuais = []
-
 class Aprendente:
-  def __init__(self, acoes:dict):
-    self.variar = True
+  def __init__(self, acoes:dict, variar=False):
+    self.variar = variar
     self._acao_atual = []
     self._refocado = False
     self._ultima_acao = []
     self.respostas_padrao = acoes
     self._antecedentes_e_respostas = {():self.respostas_padrao}
     self.respostas_atuais = []
+    self.antecedente_atual = []
 
   def proxima_acao(self, antecedente:list):
     # validar se 'antecedente' é uma lista
     if not isinstance(antecedente, list):
       raise TypeError("O atributo 'antecedente' deve ser uma lista.")
-        
+    
     # verifica se a ação atual não tem mais um passo a ser realizado, se tiver retorna a ação sem o passo já realizado
-    if len(self._acao_atual) > 1:
+    if type(self._acao_atual) != str and len(self._acao_atual) > 1:
       self._acao_atual = self._acao_atual.pop(0)
-      return self._acao_atual
+      return self._acao_atual[0]
     
     # antes de definir a próxima ação, salva na variável _ultima_acao qual foi a ultima ação realizada
     self._ultima_acao = self._acao_atual
 
+    # define o antecedente atual como o parametro de antecedente recebido
+    self.antecedente_atual = antecedente
+
     # resgata o aprendizado relacionado ao antecedente atual e passa para respostas_atuais, se não houver será definodo como respostas_padrao
-    self.respostas_atuais = self.resgatar_aprendizado(antecedente)
-    print(self.respostas_atuais)
+    self.respostas_atuais = self.resgatar_aprendizado()
 
-    self.definir_proxima_acao()  
+    if self.variar == True:
+      self.variacao()
 
-  def resgatar_aprendizado(self, antecedente):
+    self._refocado = False
+
+    return self.definir_acao()
+
+  def definir_acao(self):
+    # define os parametro para a funcao choices(), no caso a lista de opções a serem escolhidas e os pesos relativos
+    opcoes = list(self.respostas_atuais.keys())
+    pesos_das_opcoes = [valor[1] - valor[0] for valor in list(self.respostas_atuais.values())]
+
+    # define a acao atual usando a função choices() e retorna a acao atual
+    self._acao_atual = random.choices(opcoes, weights=pesos_das_opcoes)
+
+    return self._acao_atual[0]
+
+  def resgatar_aprendizado(self):
     #procurar o index na lista de todos os aprendizados onde o antecedente seja igual ao parametro recebido
-    if tuple(antecedente) in self._antecedentes_e_respostas.keys():
-      return _antecedentes_e_respostas[tuple(antecedente)]
+    if tuple(self.antecedente_atual) in self._antecedentes_e_respostas.keys():
+      return self._antecedentes_e_respostas[tuple(self.antecedente_atual)]
     else:
       return self.respostas_padrao
 
-  def definir_proxima_acao(self):
-    total_soma_fatores_restantes = int
-    respostas_e_probabilidades = {}
-    numero_aleatorio = random.random()
+  def salvar_aprendizado(self):
+    self._antecedentes_e_respostas[tuple(self.antecedente_atual)] = self.respostas_atuais
 
-    # subtrai todos os custos do fatores, depois soma todos esses resultados e defini a variável com essa soma
-    for resposta in self.respostas_atuais:
-      total_soma_fatores_restantes = total_soma_fatores_restantes + (resposta.fator - resposta.custo)
-  
-    # cria um dicionário com todas as respostas (chave) e probabilidades (valor). Essa probabilidade é obtida com a conta abaixo
-    for resposta in self.respostas_atuais:
-      respostas_e_probabilidades[resposta.acao] = (resposta.fator - resposta.custo) / total_soma_fatores_restantes
+  def reforcar(self, magnitude=1):
+    self._refocado = True
+    self.respostas_atuais[self._acao_atual][1] += magnitude
 
-    #ordena as chaves-valores em ordem decrescente de acordo com o valor. Probabilidades vão de 0 a 1
-    respostas_e_probabilidades = dict(sorted(respostas_e_probabilidades.items(), key=lambda item: item[1], reverse=True))
+    self.salvar_aprendizado()
 
-    # escolhe a resposta de acordo com o número aleatório
-    for resposta in respostas_e_probabilidades:
-      if respostas_e_probabilidades[resposta] <= numero_aleatorio:
-        return resposta
-    # em ocasiões específicas o numero aleatório pode dar maior que qualquer probabilidade, nesse caso retorna a resposta com a maior probabilidade (a ultima da lista)
-    return list(self.respostas_atuais.keys())[-1]
-
-
-class Acao:
-  # abaixo lista para salvar objetos instanciados com essa classe
-  _acoes = []
-
-  def __init__(self, acao:str, custo:int, fator:int):
-    #validando os tipos de variaveis
-    if not isinstance(acao, list):
-      raise TypeError("O atributo 'acao' deve ser uma lista.")
-    if not isinstance(custo, int):
-      raise TypeError("O atributo 'custo' deve ser um inteiro.")
-    if not isinstance(fator, int):
-      raise TypeError("O atributo 'fator' deve ser um inteiro.")
+  #do jeito que tá aqui vai variar 100% das vezes que for chamada essa função
+  #falta definir o custo e ver sobre a parte de salvar
+  def variacao(self):
+    # verifica se foi reforçado, caso sim finaliza a função
+    if not self._refocado:
+      return
     
-    self.acao = acao
-    self.custo = custo
-    self.fator = fator
-
-    #salvando na lista os objetos instanciados nessa classe
-    Acao._acoes.append(self)    
-
-  @classmethod
-  def get_acoes(cls):
-    return cls._acoes
-
-# vai receber como parâmetro o antecedente e vai retornar uma nova ação
-def proxima_acao(antecedente):
-
-  #validar se 'antecedente' é uma lista
-  if not isinstance(antecedente, list):
-      raise TypeError("O atributo 'antecedente' deve ser uma lista.")
-
-  global _acao_atual, _ultima_acao, respostas_atuais
-
-  # verifica se a ação atual não tem mais um passo a ser realizado, se tiver retorna a ação sem o passo já realizado
-  if len(_acao_atual) > 1:
-    _acao_atual = _acao_atual.pop(0)
-    return _acao_atual
+    #retornar isso abaixo e ver como finalizar a função que chamou essa
+    self._acao_atual[len(self._acao_atual)] = self.definir_acao()
     
-  # antes de definir a próxima ação, salva na variável _ultima_acao qual foi a ultima ação realizada
-  _ultima_acao = _acao_atual
-
-  #resgata o aprendizado relacionado ao antecedente atual e passa para respostas_atuais, se não houver será definodo como respostas_padrao
-  respostas_atuais = resgatar_aprendizado(antecedente)
-
-  definir_proxima_acao()  
-
-def definir_proxima_acao():
-
-  total_soma_fatores_restantes = int
-  respostas_e_probabilidades = {}
-
-  # subtrai todos os custos do fatores, depois soma todos esses resultados e defini a variável com essa soma
-  for resposta in respostas_atuais:
-    total_soma_fatores_restantes = total_soma_fatores_restantes + (resposta.fator - resposta.custo)
-  
-  # cria um dicionário com todas as respostas (chave) e probabilidades (valor). Essa probabilidade é obtida com a conta abaixo
-  for resposta in respostas_atuais:
-    respostas_e_probabilidades[resposta.acao] = (resposta.fator - resposta.custo) / total_soma_fatores_restantes
-
-  #ordena as chaves-valores em ordem decrescente de acordo com o valor
-  respostas_e_probabilidades = dict(sorted(respostas_e_probabilidades.items(), key=lambda item: item[1], reverse=True))
-
-
-def resgatar_aprendizado(antecedente):
-  #procurar o index na lista de todos os aprendizados onde o antecedente seja igual ao parametro recebido
-  if antecedente in _antecedentes_e_respostas:
-    return _antecedentes_e_respostas[antecedente]
-  else:
-    return Acao.get_acoes()
-    #return respostas_padrao
-
-
-
-
 
 """
 OKAY export var compAtual = {comp:[], fator: 0, custo: 0};
@@ -248,12 +180,5 @@ export function salvarAprendizado(){
 export function atualizarCompAtual(valor){
   compAtual = JSON.parse(valor)
 }
-
-export function definirRespostasPadrao(valor){
-  respostasPadrao = JSON.parse(valor)
-}
-
-----------
-
 
 """

@@ -1,12 +1,16 @@
-from main import Acao, Aprendente
+from main import Aprendente
 
-#acao1 = Acao(["testar"], 1, 2)
-
-
+# define uma variável com um dicionário onde as chaves são tuplas contendo o "nome" da ação
+# e os valores são listas onde o indice [0] é o custo da resposta e o indice [1] é o fator da probabilidade
+# essa varia´vel será passada como atributo na instancia do apredente
 acoes_do_teste1 = {("andar_para_frente"): [2, 5],
                    ("andar_para_tras"): [2, 5],
                    ("ficar_parado"): [0, 5],
-                   ("pular"): [4, 5]}
+                   ("pular"): [4, 500]}
 
 teste1 = Aprendente(acoes_do_teste1)
-teste1.proxima_acao(["nada"])
+print(teste1.proxima_acao(["nada"]))
+
+if teste1._acao_atual == "pular" or teste1._acao_atual == "ficar_parado":
+    teste1.reforcar(3)
+    print("dsfsdfs")
