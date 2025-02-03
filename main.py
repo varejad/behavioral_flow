@@ -1,4 +1,4 @@
-import random
+import random, copy
 
 class Aprendente:
   # tem que validar se 'acoes' é um dicionario onde as chaves são tuplas e os valores são listas...
@@ -8,24 +8,16 @@ class Aprendente:
     
     self.prob_variacao = prob_variacao
     self.variar = variar
-    self._acao_atual = ()
+    self._acao_atual = tuple
     self._refocado = True
     self._variou_na_ultima_tentativa = False
     self._antecedentes_e_respostas = {():acoes}
     self.respostas_atuais = []
-    self.antecedente_atual = []
+    self.antecedente_atual = ()
 
-  def proxima_acao(self, antecedente:list):
-    if not isinstance(antecedente, list):
-      raise TypeError("O atributo 'antecedente' deve ser uma lista.")
-    
-    # sobre as ações geradas na variação: fica como resposabilidade de quem usar essa biblioteca garantir que 
-    # cada açao da lista de gerada na variação seja executada antes de pedir uma nova ação
-    """# verifica se a ação atual não tem mais um passo a ser realizado,
-    se tiver retorna a ação sem o passo já realizado
-    if len(self._acao_atual) > 1:
-      identado dentro desse if poderia estar o código para retornar a proxima acao da tupla até que fossem realizadas todas,
-      mas optei por outra abordagem descrita acima"""
+  def proxima_acao(self, antecedente:tuple):
+    if not isinstance(antecedente, tuple) or antecedente == ():
+      raise TypeError("O atributo 'antecedente' deve ser uma tupla e deve ser diferente de ().")
 
     # define o antecedente atual como o parametro de antecedente recebido
     self.antecedente_atual = antecedente
@@ -52,14 +44,13 @@ class Aprendente:
     return random.choices(opcoes, weights=pesos_das_opcoes)[0]
 
   def resgatar_aprendizado(self):
-    #procurar o index na lista de todos os aprendizados onde o antecedente seja igual ao parametro recebido
-    if tuple(self.antecedente_atual) in self._antecedentes_e_respostas.keys():
-      return self._antecedentes_e_respostas[tuple(self.antecedente_atual)]
+    if self.antecedente_atual in self._antecedentes_e_respostas.keys():
+      return self._antecedentes_e_respostas[self.antecedente_atual]
     else:
-      return dict(self._antecedentes_e_respostas[tuple()])
+      return copy.deepcopy(self._antecedentes_e_respostas[()])
 
   def salvar_aprendizado(self):
-    self._antecedentes_e_respostas[tuple(self.antecedente_atual)] = self.respostas_atuais
+    self._antecedentes_e_respostas[self.antecedente_atual] = self.respostas_atuais
 
   def reforcar(self, magnitude=1, acao=tuple):
     self._refocado = True
@@ -75,7 +66,7 @@ class Aprendente:
       novo_passo = self.definir_acao() 
       custo_da_variacao = self.respostas_atuais[self._acao_atual][0] + self.respostas_atuais[novo_passo][0]/2
       fator_da_variacao = self.respostas_atuais[self._acao_atual][1]*0.75
-      #incluir nas respostas atuais, se for reforcado vai salvar, se não não salva (ESTA SALVANDO MESMO NÃO SENDO REFORÇADO)
+      #incluir nas respostas atuais, se for reforcado vai salvar, se não não salva
       self.respostas_atuais[tuple(list(self._acao_atual) + list(novo_passo))] = [custo_da_variacao,fator_da_variacao]
       self._variou_na_ultima_tentativa = True
       return tuple(list(self._acao_atual) + list(novo_passo))
