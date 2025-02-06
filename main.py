@@ -55,7 +55,7 @@ class Aprendente:
   def reforcar(self, magnitude=1, acao=tuple):
     self._refocado = True
     if acao == tuple: acao = self._acao_atual #quando o parametro 'acao' não é passado
-    self.respostas_atuais[acao][1] += magnitude
+    self.respostas_atuais[acao][1] += magnitude if self.respostas_atuais[acao][1] + magnitude >= 0 else -self.respostas_atuais[acao][1] #garantindo que o fator não seja < 0
     self.salvar_aprendizado()
 
   def variacao(self):
