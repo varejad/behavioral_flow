@@ -1,4 +1,4 @@
-from main import Aprendente
+from behavioralflow.core import Aprendente
 
 # define uma variável com um dicionário onde as chaves são tuplas contendo o "nome" da ação
 # e os valores são listas onde o indice [0] é o custo da ação e o indice [1] é o fator da probabilidade dessa ação ser escolhida
