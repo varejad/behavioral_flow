@@ -72,6 +72,16 @@ Confira o arquivo 'exemplo.py' para ver um caso prático em que o agente aprende
 para isso eu usei a ação anterior do agente como contexto e reforcei se a proxima ação correspondesse à sequência que eu gostaria e punia caso não.
 No fim da interação o agente está executando as ações na sequência esperada, usando como contexto a ação executada anteriormente para escolher a próxima.
 
+    when True:
+        antecedente = definir_antecedente()
+
+        acao = agente.proxima_acao(antecedente)
+
+        resultado_da_acao = executar_acao(acao)
+
+        if resultado_da_acao = resultado_positivo:
+            agente.reforcar()
+
 ## Instalação
 
 Para instalar a biblioteca, use o `pip`:
