@@ -23,7 +23,7 @@ O segundo int será um 'fator de probabilidade' quanto maior esse número em rel
 
 EXEMPLO:
     
-    from behavioralflow import Aprendente
+    from behavioralflow.core import Aprendente
 
     acoes_do_exemplo1 = {
         ("ação_1",): [2, 5],  # custo = 2, fator de probabilidade = 5
