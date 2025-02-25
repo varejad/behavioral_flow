@@ -13,7 +13,7 @@ EN-US
 The library contains a class called Aprendente (which simulates an organism capable of learning how to act). Objects instantiated with this class can learn through reinforcement and can consider the context (also called antecedent in BA). In other words, they learn what they should do according to the given context. Additionally, they can create sequences of basic actions to form new actions.
 
 
-PT-BT
+PT-BR
 
 ## Como usar a biblioteca
 
