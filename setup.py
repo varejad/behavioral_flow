@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='behavioralflow',
-    version='0.1.0',
+    version='1.0.0',
     author='Ademilson',
     author_email='junior18ademilson@gmail.com',
     description='Uma biblioteca para simular alguns princípios comportamentais básicos, como reforçamento.',
