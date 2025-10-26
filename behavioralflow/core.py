@@ -1,4 +1,6 @@
 import random, copy, json
+# TO DO
+# Documentação
 
 class Aprendente:
   # tem que validar se 'acoes' é um dicionario onde as chaves são tuplas e os valores são listas...

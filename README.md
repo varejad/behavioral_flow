@@ -21,7 +21,7 @@ PT-BR
 
 Ao instaciar um Aprendente você deve passar como parâmetro obrigatório um dicionário contendo as ações básicas desse Aprendente.
 
-As chaves desse dicionário obrigatoriamente devem ser tuplas (preferencialmente com apenas um ítem do tipo String) que serão os 'nomes' das ações.
+As chaves desse dicionário obrigatoriamente devem ser tipo string (que serão os 'nomes' das ações).
 
 Já os valores obrigatoriamente devem ser listas de dois ítens do tipo int >= 0.
 O primeiro será o custo daquela ação (algo como a dificuldade que um organismo tem para realizar uma ação, ou energia gasta para realizar essa ação, quanto maior esse custo menor as chances dessa ação ser realizada).
@@ -32,16 +32,18 @@ EXEMPLO:
     from behavioralflow.core import Aprendente
 
     acoes_do_exemplo1 = {
-        ("ação_1",): [2, 5],  # custo = 2, fator de probabilidade = 5
-        ("ação_2",): [1, 3]
+        "ação_1": [2, 5],  # custo = 2, fator de probabilidade = 5
+        "ação_2": [1, 3]
     }
 
     agente = Aprendente(acoes_do_exemplo1)
 
 
-Existem 2 parametros opcionais ao se instanciar um Aprendente.
-O primeiro é um booleano (por padrão ele é False), que se refere à capacidade do organismo de realizar a simulação de variação comportamental. Nesse caso se refere à capacidade de combinar ações básica passadas no primeiro parâmetro para criar novas ações. Isso pode acontecer quando uma ação ocorre e não é reforçada.
-O segundo parametro opcional é um float x, tal que 1 < x > 0. Esse parametro se refere à probabilidade do Aprendente variar o comportamento a cada vez que não é reforçado, por padrão esse valor é 0.25
+Existem 3 parametros opcionais ao se instanciar um Aprendente.
+
+O primeiro é um float que deve varia entre 0 e 1 (por padrão ele é 0), que se refere à probabilidade do organismo de realizar a simulação de variação comportamental. Nesse caso se refere à capacidade de combinar ações básica passadas no primeiro parâmetro para criar novas ações. Isso pode acontecer quando uma ação ocorre e não é reforçada.
+O segundo parametro opcional é um float x, tal que 1 < x > 0. Por padrão ele é 0.1. Esse parametro se refere à taxa com que o Agente vai 'desaprender' comportamentos quando eles não são reforçados, ou seja, a taxa com que os comportamentos serão extintos
+O terceiro parametro é um int > 0 (por padrão é 1). Ele influencia na escolha das ações. Quando > 1 amplifica as probabilidades dos comportamentos mais reforçados serem escolhidos. Quando < 1 e > 0 faz o oposto, reduz as diferenças entre os mais reforçados e os menos reforçados. Quando == 1 não influencia
 
 
 EN-US
@@ -52,7 +54,7 @@ EN-US
 
 When instantiating an Aprendente, you must pass a required dictionary containing the basic actions of this Aprendente.
 
-The keys of this dictionary must be tuples (preferably with only one item of type String) that will be the 'names' of the actions.
+The keys of this dictionary must be type String (that will be the 'names' of the actions).
 
 The values must be lists of two items of type int >= 0. The first is the cost of that action (something like the difficulty an organism has in performing an action, or energy spent to perform it; the higher this cost, the lower the chance of this action being performed). The second int will be a 'probability factor'; the higher this number in relation to the factors of other actions, the higher the chances of this action occurring. If all actions have the same factor and cost, they will have the same probability of occurring.
 
@@ -61,24 +63,25 @@ EXAMPLE:
 from behavioralflow.core import Aprendente
 
 actions_example = {
-    ("action_1",): [2, 5],  # cost = 2, probability factor = 5
-    ("action_2",): [1, 3]
+    "action_1": [2, 5],  # cost = 2, probability factor = 5
+    "action_2": [1, 3]
 }
 
 agent = Aprendente(actions_example)
 
 
-There are two optional parameters when instantiating an Aprendente.
-The first is a boolean (default is False), which refers to the organism's ability to simulate behavioral variation. In this case, it refers to the ability to combine basic actions passed in the first parameter to create new actions. This can happen when an action occurs and is not reinforced.
-The second optional parameter is a float x, such that 1 < x > 0. This parameter refers to the probability of the Aprendente varying its behavior each time it is not reinforced. By default, this value is 0.25.
+There are three optional parameters when instantiating an Aprendente.
+The first is a float which should vary between 0 and 1 (default is 0), which refers to the organism's probability to simulate behavioral variation. In this case, it refers to the ability to combine basic actions passed in the first parameter to create new actions. This can happen when an action occurs and is not reinforced.
+The second optional parameter is a float x, such that 1 < x > 0. By default, it is 0.1. This parameter refers to the rate at which the Agent will 'unlearn' behaviors when they are not reinforced, that is, the rate at which behaviors will be extinguished.
+The third parameter is an integer > 0 (by default it is 1). It influences the choice of actions. When > 1, it amplifies the probabilities of the most reinforced behaviors being chosen. When < 1 and > 0, it does the opposite, reducing the differences between the most reinforced and the least reinforced behaviors. When == 1, it has no influence.
 
 
 PT-BR
 
 ### Como fazer o agente realizar ações e como reforçar ou punir
-Para que o Aprendente emita alguma ação você deve usar o método 'Aprendente.proxima_acao()', esse método precisa de um parâmentro que será usado como antecedente ou contexto, esse parâmetro deve ser uma tupla, a quantidade e tipo dos iténs ficam a seu critério.
+Para que o Aprendente emita alguma ação você deve usar o método 'Aprendente.proxima_acao()', esse método precisa de um parâmentro que será usado como antecedente ou contexto, esse parâmetro deve ser uma lista, a quantidade e tipo dos iténs ficam a seu critério.
 
-    contexto = ("contexto_exemplo",)
+    contexto = ["contexto_exemplo"]
     acao = agente.proxima_acao(contexto)
     print(f"Ação emitida: {acao}")
 
@@ -98,9 +101,9 @@ EN-US
 
 ### How to make the agent perform actions and how to reinforce or punish
 
-For the Aprendente to emit an action, you must use the method 'Aprendente.proxima_acao()'. This method requires a parameter that will be used as an antecedent or context. This parameter must be a tuple, and the number and type of items are up to you.
+For the Aprendente to emit an action, you must use the method 'Aprendente.proxima_acao()'. This method requires a parameter that will be used as an antecedent or context. This parameter must be a list, and the number and type of items are up to you.
 
-context = ("example_context",)
+context = ["example_context"]
 action = agent.proxima_acao(context)
 print(f"Emitted action: {action}")
 
@@ -126,7 +129,7 @@ Minha sugestão para usar essa biblioteca é que seu código tenha um loop onde
 5) reiniciar o loop
 
 Confira o arquivo 'exemplo.py' para ver um caso prático em que o agente aprende uma sequência esperada de ações.
-para isso eu usei a ação anterior do agente como contexto e reforcei se a proxima ação correspondesse à sequência que eu gostaria e punia caso não.
+para isso eu usei a ação anterior do agente como contexto e reforcei se a proxima ação correspondesse à sequência que eu gostaria que o agente respondesse.
 No fim da interação o agente está executando as ações na sequência esperada, usando como contexto a ação executada anteriormente para escolher a próxima.
 
     when True:
@@ -161,11 +164,11 @@ Check the 'exemplo.py' file for a practical case where the agent learns an expec
 while True:
     antecedente = definir_antecedente()
 
-    acao = agente.proxima_acao(antecedente)
+    action = agente.proxima_acao(antecedente)
 
-    resultado_da_acao = executar_acao(acao)
+    action_result = executar_acao(acao)
 
-    if resultado_da_acao == resultado_positivo:
+    if action_result == good_result:
         agente.reforcar()
 
 PT-BR

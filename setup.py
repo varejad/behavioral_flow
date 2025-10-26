@@ -20,4 +20,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
+    license='Apache License 2.0',
+    keywords='behavior analysis reinforcement learning psychology simulation',
+
 )

@@ -15,29 +15,29 @@ acao_anterior = "-"
 def acao_A(passo):
     print(f"executando {exemplo1.acao_atual}")
     if antecedente[0] == "ação D":
-        exemplo1.reforcar(10)
+        exemplo1.reforcar(1.0)
     #else: exemplo1.reforcar(-5)
 
 def acao_B():
     print(f"executando {exemplo1.acao_atual}")
     if antecedente[0] == "ação A":
-        exemplo1.reforcar(10)
+        exemplo1.reforcar(1.0)
     #else: exemplo1.reforcar(-5)
         
 def acao_C():
     print(f"executando {exemplo1.acao_atual}")
     if antecedente[0] == "ação B":
-        exemplo1.reforcar(10)
+        exemplo1.reforcar(1.0)
     #else: exemplo1.reforcar(-5)
         
 def acao_D():
     print(f"executando {exemplo1.acao_atual}")
     if antecedente[0] == "ação C":
-        exemplo1.reforcar(10)
+        exemplo1.reforcar(1.0)
     #else: exemplo1.reforcar(-5)
         
 # instanciando o Aprendente
-exemplo1 = Aprendente(acoes_do_exemplo1, prob_variacao=0, taxa_extincao=0.0, k=5)
+exemplo1 = Aprendente(acoes_do_exemplo1, prob_variacao=0, taxa_extincao=0.0, k=1)
 
 def executar_acao(acao):
     #if len(acao) > 1: exemplo1.reforcar(10)
